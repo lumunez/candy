@@ -1,0 +1,82 @@
+﻿=======================
+====== PLUGINS ========
+=======================
+
+1. How to install a plugin
+-----------------------------------------------
+	1.1 Before script installation
+		- Copy the plugin folder and paste it into 'app/plugins/'
+		- Do the same for all the plugins you need, then install the script
+	
+	1.2 After script installation
+		- Copy the plugin folder and paste it into 'app/plugins/'
+		- Manually run the plugin *.sql file(s), located in 'app/plugins/PLUGIN_NAME/config/'
+
+
+2. How to enable a plugin
+-----------------------------------------------
+	Add plugin name to $CONFIG['plugins'] array into 'app/config/config.inc.php' and 'app/config/config.sample.php'
+	For example: 
+	<?php
+	$CONFIG['plugins'] = array('pjGallery', 'pjBackup');
+	//-- OR -- 
+	$CONFIG['plugins'] = 'pjGallery';
+	?>
+
+
+3. How to access a plugin (via browser)
+-----------------------------------------------
+	For example:
+	index.php?controller=pjBackup
+	index.php?controller=PLUGIN_NAME&action=SOME_ACTION
+	
+	Add above url as hyperlink to the menu if you need to.
+
+
+4. Plugin files & folders
+-----------------------------------------------
+- app/plugins/*
+- these are required folders for each plugin
+	+ config
+	+ controllers
+- these are required files for each plugin
+	+ config/config.inc.php
+	+ each plugin has at least one controller (1 default, for example AdminUsersAppController.controller.php, which is common for the whole plugin)
+- each plugin besides controllers and views may also have its own models, components, js, css, img
+
+
+5. Plugin SQL
+-----------------------------------------------
+	5.1 app/plugins/PLUGIN_NAME/config/database.sql
+	
+	5.2 method 'install' for the main plugin model - here is the place for specific sql queries.
+	for example insert in 2 tables, when for the second table inserts we need IDs from the first table. This method is called at the very last stage during the install process
+
+
+6. Syntax
+-----------------------------------------------
+
+- how to call plugin model
+	// namePlugin:nameModel
+	pjObject::import('Model', 'AdminUsers:Role');
+	pjObject::import('Model', array('pjAdminUsers:pjUser', 'pjAdminUsers:pjRole'));
+
+- how to call plugin component
+	// namePlugin:nameComponent
+	pjObject::import('Component', 'pjAdminClients:pjHttp');
+
+- using plugin paths
+	+ in current controller: $this->getConstant('PLUGIN_CSS_PATH')
+	+ in current view: $controller->getConstant('PLUGIN_CSS_PATH')
+	+ in any controller/view: pjObject::getConstant('pjAdminUsers', 'PLUGIN_CSS_PATH')
+
+- how to call an action from another controller
+	$this->requestAction(array('controller' => 'pjAdminRoles', 'action' => 'index'));
+	$arr = $this->requestAction(array('controller' => 'pjAdminRoles', 'action' => 'outputRoles'), array('output'));
+	$arr = $this->requestAction(array('controller' => 'pjLog', 'action' => 'logger'), array('return'));
+
+- how to change template view (not layout!)
+	// ControllerName, ViewName
+	$this->setTemplate('pjFront', 'output');
+	// PluginName, ControllerName:viewName
+	$this->setTemplate('pjAdminUsers', 'pjAdminRoles:index');

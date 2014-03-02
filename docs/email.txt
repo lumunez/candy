@@ -1,0 +1,64 @@
+===============================
+====== E-Mail Component =======
+===============================
+
+1. Creating an instance
+-------------------------------------------------------------
+
+	$Email = new pjEmail();
+
+
+2. Send an email (minimal setup)
+-------------------------------------------------------------
+	
+	$Email
+		->setTo('mailbox@yahoo.com')
+		->setFrom('name@gmail.com')
+		->setSubject('Ski vacation')
+		->send('message');
+
+
+3. Send an email with attachment(s)
+-------------------------------------------------------------
+
+	$result = $Email
+		->attach('C:/docs/contract.pdf')
+		->attach('D:/pics/82abs7dcaefdd67s76d77ab0.jpg', 'Bansko-ski-Cup.jpg', 'image/jpeg')
+		->setTo('mailbox@yahoo.com')
+		->setFrom('name@gmail.com')
+		//->setCc('info@domain.com')
+		//->setBcc('info@host.com')
+		//->setReplyTo('my@personal.com')
+		//->setReturnPath('my@personal.com')
+		//->setContentType('text/html')
+		//->setHeader('Message-ID: 283478237843278437809384')
+		->setSubject('Ski vacation')
+		->send('message');
+	
+	if ($result)
+	{
+		//success
+	} else {
+		//fail
+	}
+	
+4. Using SMTP
+-------------------------------------------------------------
+
+	$Email
+		->setTo('mailbox@yahoo.com')
+		->setFrom('name@gmail.com')
+		->setSubject('Ski vacation')
+		->setTransport('smtp')->setSmtpHost('smtp.gmail.com')->setSmtpPort(587)->setSmtpUser('myUsername@gmail.com')->setSmtpPass('myPassword')
+		->send('message');
+	;
+	
+	-- OR --
+	
+	$Email
+		->setTo('mailbox@yahoo.com')
+		->setFrom('name@gmail.com')
+		->setSubject('Ski vacation')
+		->setTransport('smtp')->setSmtpHost('192.168.1.99')->setSmtpPort(25)
+		->send('message');
+	;

@@ -1,0 +1,18 @@
+Require 'pjSMS' plugin.
+
+1. How to send a SMS
+
+	$result = $this->requestAction(array(
+		'controller' => 'pjSms', 
+		'action' => 'pjActionSend', 
+		'params' => array(
+			'number' => '359889548271', 
+			'text' => 'test message'
+		)
+	), array('return'));
+	
+	//echo $result;
+	//Message sent
+	//Incorrect API key.
+	//Account not confirmed.
+	//Message not sent ...

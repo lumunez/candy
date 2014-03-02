@@ -1,0 +1,71 @@
+@CHARSET "UTF-8";
+table.calendarTable {
+	background-color: #EFEFEF;
+	float: left;
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 10px 10px 10px 0;
+	width: 224px;
+}
+td.calendarMonth{
+	padding: 5px;
+}
+td.calendarMonth, td.calendarWeekDay, td.calendar, td.calendarPast, td.calendarReserved, 
+td.calendarReservedLeft, td.calendarReservedRight, td.calendarToday {
+	text-align: center;
+	vertical-align: middle;
+}
+td.calendarWeekDay, td.calendar, td.calendarPast, td.calendarReserved
+td.calendarReservedLeft, td.calendarReservedRight, td.calendarToday {
+	width: 32px;
+	height: 26px;
+}
+td.calendarMonth{
+	font-weight: bold; 
+	color: #000;
+}
+td.calendarWeekDay{
+	background-color: #e9e9e9;
+	font-weight: bold; 
+	color: #000;
+}
+td.calendarToday { 
+	background-color: #D6D6D6; 
+}
+td.calendarReserved{
+	background-color: #BCBCBC;
+	color: #fff;
+}
+td.calendarReservedLeft{
+	background-image: url(../../../index.php?controller=pjListings&action=pjActionImage&color1=FFFFFF&color2=BCBCBC&width=33&height=31);
+	background-position: center center;
+	color: #626262;
+}
+td.calendarReservedRight{
+	background-image: url(../../../index.php?controller=pjListings&action=pjActionImage&color1=BCBCBC&color2=FFFFFF&width=33&height=31);
+	background-position: center center;
+	color: #626262;
+}
+td.calendarPast{
+	background-color: #E3E3E3;
+	color: #666;
+}
+td.calendar { 
+	background-color: #fff;
+}
+
+.calendarTooltip {
+    background-color: #000000;
+    border: 1px solid #000000;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: normal;
+    margin: 1px 0 0 10px;
+    padding: 5px;
+    position: absolute;
+    text-align: left;
+    visibility: hidden;
+    white-space: nowrap;
+    z-index: 1000;
+}

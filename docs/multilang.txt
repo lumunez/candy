@@ -1,0 +1,34 @@
+============================
+======= MULTI LANG =========
+============================
+
+1. Select
+
+	$countries = pjCountryModel::factory()
+		->select('t1.id, t1.status, t2.content AS name')
+		->join('pjMultiLang', "t2.foreign_id = t1.id 
+			AND t2.model = 'pjCountry' 
+			AND t2.locale = '".$this->getLocaleId()."' 
+			AND t2.field = 'name'", 'left')
+		->findAll()
+		->getData();
+
+2. Insert
+
+	if (isset($_POST['i18n']))
+	{
+		pjMultiLangModel::factory()->saveMultiLang($_POST['i18n'], $id, 'pjCountry');
+	}
+
+3. Update
+
+	pjMultiLangModel::factory()
+		->updateMultiLang(array(
+			$this->getLocaleId() => array(
+				$_POST['column'] => $_POST['value']
+			)
+		), $_GET['id'], 'pjCountry');
+
+4. Delete
+
+	pjMultiLangModel::factory()->where('model', 'pjCountry')->where('foreign_id', $_GET['id'])->eraseAll();

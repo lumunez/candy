@@ -1,0 +1,80 @@
+Note: Require 'pjDev' plugin
+
+1. Adding new multilang field (street address for example) to the User model.
+-----------------------------------------------------------------------------
+- Add the new field name to $i18n
+
+	# pjUser.model.php
+	public $i18n = array('address');
+	
+- Add appropriate html to create/update views
+
+	# app/views/pjAdminUsers/create.php
+	foreach ($tpl['lp_arr'] as $v)
+	{
+		?>
+		<p class="pj-multilang-wrap" data-index="<?php echo $v['id']; ?>" style="display: <?php echo (int) $v['is_default'] === 0 ? 'none' : NULL; ?>">
+			<label class="title"><?php __('lblUserAddress'); ?>:</label>
+			<span class="inline_block">
+				<input type="text" name="i18n[<?php echo $v['id']; ?>][address]" class="pj-form-field w300<?php echo (int) $v['is_default'] === 0 ? NULL : ' required'; ?>" />
+				<span class="pj-multilang-input"><img src="<?php echo PJ_INSTALL_URL . PJ_FRAMEWORK_LIBS_PATH . 'pj/img/flags/' . $v['file']; ?>" alt="" /></span>
+			</span>
+		</p>
+		<?php
+	}
+
+
+2. Adding new multilang label (scalar value)
+-----------------------------------------------------------------------------
+- Navigate to 'index.php?controller=pjDev'
+	Use the form to add your label. 
+	'Key' need to be unique (for example 'my_new_label')
+	For 'Model' type 'pjField'
+	For 'Field' type 'title'
+
+- How to use it?
+
+	// echo
+	__('my_new_label');
+	
+	// return 
+	$value = __('my_new_label', true);
+	
+	
+
+3. Adding new multilang array
+-----------------------------------------------------------------------------
+- Navigate to 'index.php?controller=pjDev'
+
+	Use the form to add your array of values.
+	For 'Key' use several times the same value
+	For 'Type' choose 'array'
+	For 'Index' type array index
+	For 'Model' type 'pjField'
+	For 'Field' type 'title'
+	
+	Example: 
+	
+	To get an array like this:	
+	$cc = array(
+		'visa' => 'VISA', 
+		'mc' => 'Master Card',
+		'amex' => 'American Express',
+		'diners' => 'Diners Club'
+	)
+	
+	you need to submit 4 times the form with data like these:	
+	key: 'cc', type: 'arrays', model: 'pjField', field: 'title', index: 'visa', content(en): 'VISA', content(bg): 'Visa'
+	key: 'cc', type: 'arrays', model: 'pjField', field: 'title', index: 'mc', content(en): 'Master Card', content(bg): 'Master Card'
+	key: 'cc', type: 'arrays', model: 'pjField', field: 'title', index: 'amex', content(en): 'American Express', content(bg): 'American Express'
+	key: 'cc', type: 'arrays', model: 'pjField', field: 'title', index: 'diners', content(en): 'Diners Club', content(bg): 'Diners Club'
+	
+
+- How to use it?
+	...
+	foreach (__('cc', true) as $key => $value)
+	{
+		?><option value="<?php echo $key; ?>"><?php echo $value; ?></option><?php
+	}
+	...
+	

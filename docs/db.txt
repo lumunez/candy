@@ -1,0 +1,246 @@
+====================================
+====== WORKING WITH DATABASE =======
+====================================
+
+I. Creating an instance
+----------------------------------------------
+
+	$pjUserModel = new pjUserModel();
+	-- OR --
+	$pjUserModel = new pjUserModel($_POST);
+	-- OR --
+	$pjUserModel = pjUserModel::factory();
+	-- OR --
+	$pjUserModel = pjUserModel::factory($_POST);
+
+
+II. Best practices:
+----------------------------------------------
+
+	1. Caching - for multiple operations over the same object (keep memory usage as low as you can)
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	BAD:
+		public function index()
+		{
+			$count = pjUserModel::factory()->where('t1.role_id', 1)->findCount()->getData();
+			$users = pjUserModel::factory()->where('t1.role_id', 1)->findAll()->getData();
+		}
+	
+	GOOD:
+		public function index()
+		{
+			$pjUserModel = pjUserModel::factory()->where('t1.role_id', 1);
+						
+			$count = $pjUserModel->findCount()->getData();
+			$users = $pjUserModel->findAll()->getData();
+		}
+		
+		
+	2. Avoid MySQL Flush on every INSERT/UPDATE (speed up query)
+	++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	BAD:
+		public function addUser()
+		{
+			$pjUserModel = pjUserModel::factory();
+			
+			foreach ($_POST['names'] as $name)
+			{
+				$pjUserModel->set('name', $name)->insert();
+			}
+		}
+		
+	GOOD:
+		public function addUser()
+		{
+			$pjUserModel = pjUserModel::factory();
+			
+			$pjUserModel->begin();
+			foreach ($_POST['names'] as $name)
+			{
+				$pjUserModel->set('name', $name)->insert();
+			}
+			$pjUserModel->commit();
+		}
+	
+
+III. Active record (AR)
+----------------------------------------------
+1. Select queries
+	- find()
+	- findAll()
+	- findCount()
+	
+	// Find data by given primary key
+	pjUserModel::factory()->set('id', 1)->find()->getData();
+
+	// Find count by given conditions
+	pjUserModel::factory()->where('t1.role_id', 1)->findCount()->getData();
+		 
+	// Find data by given conditions
+	pjUserModel::factory()
+		->where('t1.role_id', 2)
+		->where('t1.id != 1')
+		->orderBy('t1.name ASC')
+		->limit(5)
+		->findAll()
+		->getData();
+
+2. Insert queries
+	- insert()
+	
+	// Insert data
+	$insert_id = pjUserModel::factory()->setAttributes($_POST)->insert()->getInsertId();
+	// Do the same as above
+	$insert_id = pjUserModel::factory($_POST)->insert()->getInsertId();
+
+3. Update queries
+	- modify()
+	- modifyAll()
+	
+	// Update single record by given primary key
+	pjUserModel::factory()->set('id', 1)->modify($_POST);
+	
+	// Update record(s) by given conditions
+	pjUserModel::factory()->where('DATE(t1.created) = CURDATE()')->limit(5)->modifyAll($_POST);
+
+4. Delete queries
+	- erase()
+	- eraseAll()
+	- truncate()
+	
+	// Delete single record by given primary key
+	pjUserModel::factory()->set('id', 8)->erase();
+	
+	// Delete record(s) by given conditions
+	pjUserModel::factory()->where('t1.role_id', 2)->eraseAll();
+	
+	// Truncate table
+	pjUserModel::factory()->truncate();
+
+5. Custom queries
+	- prepare()
+	- exec()
+	
+	// Execute custom query
+	pjUserModel::factory()
+		->prepare(sprintf("SELECT * FROM `%s` WHERE `role_id` :role_id", pjRoleModel::factory()->getTable()))
+		->exec(array(
+			'role_id' => $this->getRoleId()
+		));
+	
+6. Fetching result data
+	- getData()
+	- getDataPair()
+	- getAffectedRows()
+	- getInsertId()
+	
+	$users = pjUserModel::factory()->findAll()->getData();
+	
+	$users_roles = pjUserModel::factory()->findAll()->getDataPair('id', 'role_id');
+	
+	$affected_rows = pjUserModel::factory()->where('DATE(t1.created) = CURDATE()')->limit(5)->modifyAll($_POST)->getAffectedRows();
+	
+	$insert_id = pjUserModel::factory()->setAttributes($_POST)->insert()->getInsertId()
+
+7. Clauses
+	- select()
+	- from()
+	- where()
+	- whereIn()
+	- whereNotIn()
+	- groupBy()
+	- orderBy()
+ 	- having()
+ 	- limit()
+ 	- offset()
+ 	- distinct()
+ 	
+ 	$users = pjUserModel::factory()->select('t1.id, t1.email')->findAll()->getData();
+ 	
+ 	$roles = pjUserModel::factory()->from( pjRoleModel::factory()->getTable() )->findAll()->getData();
+ 	
+ 	$users = pjUserModel::factory()->where('t1.role_id', 1)->orderBy('t1.id ASC)->findAll()->getData();
+ 	$users = pjUserModel::factory()->where('t1.role_id = 1')->groupBy('t1.id)->limit(10, 5)->findAll()->getData();
+ 	$users = pjUserModel::factory()->where('t1.role_id = 1 OR t1.id != 2')->limit(10)->findAll()->getData();
+ 	$users = pjUserModel::factory()->where('t1.role_id IS NULL')->findAll()->getData();
+ 	
+ 	$users = pjUserModel::factory()->whereIn('t1.role_id', array(1,2,3))->findAll()->getData();
+ 	
+ 	$users = pjUserModel::factory()->whereNotIn('t1.role_id', array(1,2,3))->findAll()->getData();
+ 
+8. Joins
+ 	- join()
+ 	
+ 	$users = pjUserModel::factory()
+ 		->select('t1.*, t2.role')
+ 		->join('pjRole', 't1.role_id = t2.id', 'left')
+ 		->where('t1.role_id = 1')
+ 		->findAll()->getData();
+ 	
+9. Working with AR
+ 	- setAttributes()
+ 	- set()
+ 	- getAttributes()
+ 	
+ 	pjUserModel::factory()
+ 		->setAttributes(array(
+	 		'name' => 'Jamal Crawford',
+	 		'email' => 'jamal@laclippers.com',
+	 		'password' => 'pass'
+	 	))
+	 	->insert();
+	 	
+	pjUserModel::factory()->set('id', 5)->erase();
+ 	
+10. Callbacks
+	- afterDelete()
+	- afterFind()
+	- afterSave()
+	- beforeDelete()
+	- beforeFind()
+	- beforeSave()
+	
+	Note: these methods are usualy defined in the model.
+	
+	// pjUser.model.php
+	// If next is defined, registrations became closed after 2013-05-31
+	public function beforeSave()
+	{
+		if (time() > mktime(0, 0, 0, 31, 5, 2013))
+		{
+			return false;
+		}
+		return true;
+	}
+	
+11. Helpers
+	- debug()
+	- reset()
+	- escape()
+	- validates()
+	
+	// pjUser.model.php
+	protected $validate = array(
+		'rules' => array(
+			'email' => array('email' => true, 'required' => true),
+			'password' => array('required' => true),
+			'name' => array('required' => true)
+		)
+	);
+	
+	// pjAdminUsers.controller.php
+	$is_valid = $pjUserModel->validates($_POST);
+	if (!$is_valid)
+	{
+		print_r( $pjUserModel->getErrors() );
+	}
+
+12. Transactions
+	- begin()
+	- autocommit()
+	- commit()
+	- releaseSavepoint()
+	- rollback()
+	- rollbackToSavepoint()
+	- savepoint()
+	

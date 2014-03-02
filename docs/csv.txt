@@ -1,0 +1,45 @@
+===============================
+====== CSV Component =======
+===============================
+
+1. Creating an instance
+-------------------------------------------------------------
+
+	$CSV = new pjCSV();
+	
+	$data = array(
+		0 => array('id' => 1, 'name' => 'Jack Kerouac'),
+		1 => array('id' => 2, 'name' => 'Charles Bukowski'),
+		2 => array('id' => 3, 'name' => 'William Saroyan'),
+		...
+	);
+
+2. Setup
+-------------------------------------------------------------
+
+	$CSV
+		->setName("Authors.csv")
+		->setHeader(true)
+		//->setDelimiter(",")
+		//->setEnclose('"')
+		//->setEscape('"')
+		//->setEol("\n")
+	;
+
+
+3. Download
+-------------------------------------------------------------
+
+	$CSV
+		->setName("Authors.csv")
+		->process($data)
+		->download();
+
+
+4. Save on disk
+-------------------------------------------------------------
+
+	$CSV
+		->setName("D:/export/Authors.csv")
+		->process($data)
+		->write();

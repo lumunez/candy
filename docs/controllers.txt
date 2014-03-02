@@ -1,0 +1,47 @@
+==============================================
+======= CONTROLLERS ==========================
+==============================================
+
+1. Resource handling
+	- appendJs()
+	- appendCss()
+	- resetJs()
+	- resetCss()
+	- setJS()
+	- setCss()
+	
+	$this->appendJs('pjAdminListings.js')->appendJs('jquery.datagrid.js', PJ_LIBS_PATH . 'pj/js/');
+	$this->setJs(array('pjAdminListings.js', 'pjAdminCore.js'));
+
+2. Template
+	- get()
+	- set()
+	
+	// pass a variable from any controller's action to its corresponding view
+	$this->set('arr', $arr);
+	$this->set('status', 1);
+	
+3. Getters
+	- getAjax()
+	- getLayout()
+	- getParams() //useful when use 'requestAction'
+
+4. Setters
+	- setAjax()
+	- setLayout()
+	- setTemplate()
+	
+5. Usuful
+	- log()
+	- requestAction()
+	Note: This function calls a controller's action from any location and returns data from the action.
+	
+	
+	$this->log('test')
+	
+6. Callbacks
+	- beforeFilter()
+	- afterFilter()
+	- beforeRender()
+	- afterRender()
+	

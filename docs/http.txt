@@ -1,0 +1,60 @@
+==============================================
+======= HTTP Component =======================
+==============================================
+
+1. Creating an instance
+--------------------------------------------------
+	$Http = new pjHttp();
+	
+	$url = "http://www.lipsum.com/feed/html";
+	
+
+2. Making the request
+--------------------------------------------------
+2.1 GET requests
+
+	$Http->request($url);
+	
+	$Http->curlRequest($url);
+	
+	$Http->socketRequest($url);
+	
+	$Http->fileRequest($url);
+	
+	$Http->streamRequest($url);
+
+
+2.2 POST requests
+
+	$data = http_build_query(array(
+		'param1' => 'value 1',
+		'param2' => 'value 2',
+		'param3' => 'value 3'
+	));
+		
+	$Http->setMethod('POST')->setData($data)->curlRequest($url);
+	$Http->setMethod('POST')->setData($data)->socketRequest($url);
+	
+2.3 Basic Authorization
+
+	$Http->setUsername('user')->setPassword('pass')->curlRequest($url);
+	$Http->setUsername('user')->setPassword('pass')->socketRequest($url);
+
+2.4 Set custom header
+	
+	$Http->addHeader("Cache-Control: max-age=0");
+	$Http->addHeader("Connection: keep-alive");
+	
+	$Http->setHeaders(array(
+		"Cache-Control: max-age=0",
+		"Connection: keep-alive"
+	));
+	
+
+3. Getting the response
+--------------------------------------------------
+	$response = $Http->getResponse();
+	$responseHeaders = $Http->getResponseHeaders();
+	
+	print_r($response);
+	print_r($responseHeaders);
